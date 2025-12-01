@@ -29,3 +29,8 @@ class Scene(SQLModel, table=True):
     description: Optional[str] = None
     created_by: Optional[int] = Field(default=None, foreign_key="user.id")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class UserRegister(SQLModel):
+    username: str
+    password: str
+    email: Optional[str] = None

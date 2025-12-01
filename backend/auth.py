@@ -14,7 +14,6 @@ from models import User
 
 load_dotenv()
 
-# Secret – override via environment in production
 SECRET_KEY = os.getenv("SCENEVAULT_SECRET_KEY")
 if not SECRET_KEY:
     raise ValueError("Please set SCENEVAULT_SECRET_KEY environment variable.")

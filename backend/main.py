@@ -5,7 +5,7 @@ from typing import List, Optional
 from contextlib import asynccontextmanager
 
 from db import engine, create_db_and_tables
-from models import User, Movie, Scene
+from models import User, Movie, Scene, UserRegister
 from auth import (
     get_password_hash, verify_password, create_access_token,
     get_current_user, require_admin, oauth2_scheme
@@ -29,12 +29,20 @@ app.add_middleware(
 
 # ---------- AUTH: register & token ----------
 @app.post("/auth/register", response_model=dict)
-def register(username: str, password: str, email: str = None):
+def register(user_data: UserRegister):
     with Session(engine) as session:
-        existing = session.exec(select(User).where(User.username == username)).first()
+        existing = session.exec(select(User).where(User.username == user_data.username)).first()
         if existing:
             raise HTTPException(status_code=400, detail="Username already registered")
-        user = User(username=username, email=email, hashed_password=get_password_hash(password))
+
+        hashed_pwd = get_password_hash(user_data.password)
+
+        user = User(
+            username=user_data.username,
+            email=user_data.email,
+            hashed_password=hashed_pwd
+        )
+
         session.add(user)
         session.commit()
         session.refresh(user)
