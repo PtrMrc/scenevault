@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
-from typing import List
+from typing import List, Optional
 from contextlib import asynccontextmanager
 
 from db import engine, create_db_and_tables
@@ -17,6 +18,14 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="SceneVault Backend", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://localhost:5173"],  # React dev servers
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ---------- AUTH: register & token ----------
 @app.post("/auth/register", response_model=dict)
@@ -63,9 +72,23 @@ def create_movie(movie: Movie, current_user: User = Depends(get_current_user)):
         return movie
 
 @app.get("/movies", response_model=List[Movie])
-def get_movies():
+def get_movies(skip: int = 0, limit: int = 20):
     with Session(engine) as session:
-        movies = session.exec(select(Movie)).all()
+        movies = session.exec(select(Movie).offset(skip).limit(limit)).all()
+        return movies
+
+@app.get("/movies/search", response_model=List[Movie])
+def search_movies(q: str, skip: int = 0, limit: int = 20):
+    with Session(engine) as session:
+        # Search in title, description, director, and genres
+        movies = session.exec(
+            select(Movie).where(
+                (Movie.title.contains(q)) |
+                (Movie.description.contains(q)) |
+                (Movie.director.contains(q)) |
+                (Movie.genres.contains(q))
+            ).offset(skip).limit(limit)
+        ).all()
         return movies
 
 @app.get("/movies/{movie_id}")
@@ -102,9 +125,20 @@ def create_scene(scene: Scene, current_user: User = Depends(get_current_user)):
         return scene
 
 @app.get("/scenes", response_model=List[Scene])
-def get_scenes():
+def get_scenes(skip: int = 0, limit: int = 50):
     with Session(engine) as session:
-        scenes = session.exec(select(Scene)).all()
+        scenes = session.exec(select(Scene).offset(skip).limit(limit)).all()
+        return scenes
+
+@app.get("/scenes/search", response_model=List[Scene])
+def search_scenes(q: str, skip: int = 0, limit: int = 50):
+    with Session(engine) as session:
+        # Search in title and description
+        scenes = session.exec(
+            select(Scene).where(
+                (Scene.title.contains(q)) | (Scene.description.contains(q))
+            ).offset(skip).limit(limit)
+        ).all()
         return scenes
 
 @app.get("/movies/{movie_id}/scenes", response_model=List[Scene])
