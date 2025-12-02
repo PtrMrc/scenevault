@@ -23,28 +23,37 @@ export default function Scenes() {
 
   const [editingScene, setEditingScene] = useState(null);
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 5;
+
   useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = async (query = '') => {
+  const fetchData = async (query = '', pageNum = 1) => {
     setLoading(true);
     try {
-      // 1. Fetch Scenes
-      let scenesUrl = 'http://localhost:8000/scenes?limit=100';
+      const skip = (pageNum - 1) * limit;
+
+      let scenesUrl = `http://localhost:8000/scenes?skip=${skip}&limit=${limit}`;
       if (query) {
-        scenesUrl = `http://localhost:8000/scenes/search?q=${encodeURIComponent(query)}`;
+        scenesUrl = `http://localhost:8000/scenes/search?q=${encodeURIComponent(query)}&skip=${skip}&limit=${limit}`;
       }
 
-      const scenesRes = await fetch(scenesUrl);
-
-      // 2. Fetch Movies (we always need these for the titles)
-      // Optimization: In a real app, you might cache this or fetch once.
-      const moviesRes = await fetch('http://localhost:8000/movies?limit=100');
+      const [scenesRes, moviesRes] = await Promise.all([
+        fetch(scenesUrl),
+        fetch('http://localhost:8000/movies?limit=100') // Fetch all movies for the dropdown
+      ]);
 
       if (scenesRes.ok && moviesRes.ok) {
-        setScenes(await scenesRes.json());
-        setMovies(await moviesRes.json());
+        const scenesData = await scenesRes.json();
+        const moviesData = await moviesRes.json();
+
+        setScenes(scenesData.data);
+        setTotalPages(Math.ceil(scenesData.total / limit));
+
+        setMovies(moviesData.data);
       }
     } catch (err) {
       console.error(err);
@@ -54,8 +63,8 @@ export default function Scenes() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(searchQuery, page);
+  }, [page]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -377,6 +386,30 @@ export default function Scenes() {
           })}
         </div>
       )}
+
+      {/* PAGINATION CONTROLS */}
+      {!loading && (
+        <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center', gap: '1rem', alignItems: 'center' }}>
+          <button
+            disabled={page === 1}
+            onClick={() => setPage(p => p - 1)}
+            style={{ padding: '0.5rem 1rem', cursor: page === 1 ? 'not-allowed' : 'pointer' }}
+          >
+            ← Előző
+          </button>
+
+          <span>{page} / {totalPages || 1}. oldal</span>
+
+          <button
+            disabled={page >= totalPages}
+            onClick={() => setPage(p => p + 1)}
+            style={{ padding: '0.5rem 1rem', cursor: page >= totalPages ? 'not-allowed' : 'pointer' }}
+          >
+            Következő →
+          </button>
+        </div>
+      )}
+
     </div>
   );
 }

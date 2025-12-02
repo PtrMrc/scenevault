@@ -22,6 +22,11 @@ export default function Movies() {
   });
   const [message, setMessage] = useState('');
 
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 5;
+
   // 1. Fetch Movies (Handles both "All" and "Search")
   const fetchMovies = async (query = '') => {
     setLoading(true);
@@ -33,8 +38,9 @@ export default function Movies() {
 
       const res = await fetch(url);
       if (res.ok) {
-        const data = await res.json();
-        setMovies(data);
+        const result = await res.json();
+        setMovies(result.data);
+        setTotalPages(Math.ceil(result.total / limit));
       }
     } catch (err) {
       console.error(err);
@@ -44,12 +50,13 @@ export default function Movies() {
   };
 
   useEffect(() => {
-    fetchMovies();
-  }, []);
+    fetchMovies(searchQuery, page);
+  }, [page]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchMovies(searchQuery);
+    setPage(1);
+    fetchMovies(searchQuery, 1);
   };
 
   // 2. Add Movie Logic
@@ -275,6 +282,29 @@ export default function Movies() {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* --- PAGINATION CONTROLS --- */}
+      {!loading && (
+        <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center', gap: '1rem', alignItems: 'center' }}>
+          <button
+            disabled={page === 1}
+            onClick={() => setPage(p => p - 1)}
+            style={{ padding: '0.5rem 1rem', cursor: page === 1 ? 'not-allowed' : 'pointer' }}
+          >
+            ← Előző
+          </button>
+
+          <span>{page} / {totalPages || 1}. oldal</span>
+
+          <button
+            disabled={page >= totalPages}
+            onClick={() => setPage(p => p + 1)}
+            style={{ padding: '0.5rem 1rem', cursor: page >= totalPages ? 'not-allowed' : 'pointer' }}
+          >
+            Következő →
+          </button>
         </div>
       )}
     </div>

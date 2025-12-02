@@ -16,8 +16,8 @@ export default function Home() {
         if (moviesRes.ok && scenesRes.ok) {
           const moviesData = await moviesRes.json();
           const scenesData = await scenesRes.json();
-          setRecentMovies(moviesData);
-          setRecentScenes(scenesData);
+          setRecentMovies(moviesData.data);
+          setRecentScenes(scenesData.data);
         }
       } catch (err) {
         console.error("Failed to fetch home data", err);
