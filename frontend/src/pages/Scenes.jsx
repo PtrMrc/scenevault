@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Scenes() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [scenes, setScenes] = useState([]);
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,6 +53,30 @@ export default function Scenes() {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
+  };
+
+  const handleDelete = async (sceneId) => {
+    if (!window.confirm("Biztosan törölni szeretnéd ezt a jelenetet?")) return;
+
+    try {
+      const res = await fetch(`http://localhost:8000/scenes/${sceneId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (res.ok) {
+        // Remove from UI immediately
+        setScenes(scenes.filter(s => s.id !== sceneId));
+        setMessage('Jelenet törölve.');
+      } else {
+        const errData = await res.json();
+        alert(`Hiba: ${errData.detail}`);
+      }
+    } catch (err) {
+      alert("Hálózati hiba.");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -195,9 +219,31 @@ export default function Scenes() {
                 <div style={{ padding: '1.5rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                     <h2 style={{ margin: 0, fontSize: '1.5rem' }}>{scene.title}</h2>
-                    <span style={{ background: '#e9ecef', padding: '0.4rem 0.8rem', borderRadius: '20px', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                      {scene.start_timestamp} - {scene.end_timestamp || '?'}
-                    </span>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ background: '#e9ecef', padding: '0.4rem 0.8rem', borderRadius: '20px', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                        {scene.start_timestamp} - {scene.end_timestamp || '?'}
+                      </span>
+
+                      {/* --- DELETE BUTTON (Only for Admin or Owner) --- */}
+                      {user && (user.is_admin || user.id === scene.created_by) && (
+                        <button
+                          onClick={() => handleDelete(scene.id)}
+                          style={{
+                            background: '#dc3545',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            padding: '0.4rem 0.8rem',
+                            cursor: 'pointer',
+                            fontSize: '0.9rem'
+                          }}
+                          title="Törlés"
+                        >
+                          🗑️
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <h4 style={{ color: '#007bff', margin: '0 0 1rem 0' }}>🎬 {getMovieTitle(scene.movie_id)}</h4>
