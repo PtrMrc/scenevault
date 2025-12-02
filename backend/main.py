@@ -120,6 +120,28 @@ def get_movie(movie_id: int):
             raise HTTPException(status_code=404, detail="Movie not found")
         return movie
 
+@app.put("/movies/{movie_id}")
+def update_movie(movie_id: int, movie_data: Movie, admin: User = Depends(require_admin)):
+    with Session(engine) as session:
+        movie = session.get(Movie, movie_id)
+        if not movie:
+            raise HTTPException(status_code=404, detail="Movie not found")
+
+        # Update fields
+        movie.title = movie_data.title
+        movie.year = movie_data.year
+        movie.director = movie_data.director
+        movie.description = movie_data.description
+        movie.poster_url = movie_data.poster_url
+        movie.duration = movie_data.duration
+        movie.genres = movie_data.genres
+        movie.imdb_rating = movie_data.imdb_rating
+
+        session.add(movie)
+        session.commit()
+        session.refresh(movie)
+        return movie
+
 # Admin-only delete
 @app.delete("/movies/{movie_id}")
 def delete_movie(movie_id: int, admin: User = Depends(require_admin)):

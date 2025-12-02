@@ -21,6 +21,8 @@ export default function Scenes() {
 
   const [searchQuery, setSearchQuery] = useState('');
 
+  const [editingScene, setEditingScene] = useState(null);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -136,6 +138,27 @@ export default function Scenes() {
     }
   };
 
+  const handleUpdateScene = async (e) => {
+    e.preventDefault();
+    if (!editingScene) return;
+
+    try {
+      const res = await fetch(`http://localhost:8000/scenes/${editingScene.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(editingScene)
+      });
+      if (res.ok) {
+        alert("Jelenet frissítve!");
+        setEditingScene(null);
+        fetchData(searchQuery);
+      } else {
+        const err = await res.json();
+        alert(`Hiba: ${err.detail}`);
+      }
+    } catch (err) { alert("Hálózati hiba"); }
+  };
+
   return (
     <div style={{ maxWidth: '900px', margin: '2rem auto', padding: '1rem' }}>
       <h1>Jelenetek</h1>
@@ -241,6 +264,34 @@ export default function Scenes() {
         </div>
       )}
 
+      {editingScene && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
+        }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <h2>Jelenet szerkesztése</h2>
+            <form onSubmit={handleUpdateScene} style={{ display: 'grid', gap: '1rem' }}>
+              <input placeholder="Cím" value={editingScene.title} onChange={e => setEditingScene({...editingScene, title: e.target.value})} required style={{ padding: '0.5rem' }} />
+
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <input placeholder="Start" value={editingScene.start_timestamp} onChange={e => setEditingScene({...editingScene, start_timestamp: e.target.value})} style={{ flex: 1, padding: '0.5rem' }} />
+                <input placeholder="End" value={editingScene.end_timestamp} onChange={e => setEditingScene({...editingScene, end_timestamp: e.target.value})} style={{ flex: 1, padding: '0.5rem' }} />
+              </div>
+
+              <input placeholder="Video URL" value={editingScene.video_url} onChange={e => setEditingScene({...editingScene, video_url: e.target.value})} style={{ padding: '0.5rem' }} />
+              <input placeholder="Tags" value={editingScene.tags} onChange={e => setEditingScene({...editingScene, tags: e.target.value})} style={{ padding: '0.5rem' }} />
+              <textarea placeholder="Leírás" value={editingScene.description} onChange={e => setEditingScene({...editingScene, description: e.target.value})} style={{ padding: '0.5rem', height: '100px' }} />
+
+              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                <button type="button" onClick={() => setEditingScene(null)} style={{ padding: '0.5rem 1rem', background: '#6c757d', color: 'white', border: 'none' }}>Mégse</button>
+                <button type="submit" style={{ padding: '0.5rem 1rem', background: '#007bff', color: 'white', border: 'none' }}>Frissítés</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* --- SCENES LIST --- */}
       {loading ? <p>Betöltés...</p> : (
         <div style={{ display: 'grid', gap: '2rem' }}>
@@ -272,23 +323,25 @@ export default function Scenes() {
                         {scene.start_timestamp} - {scene.end_timestamp || '?'}
                       </span>
 
-                      {/* --- DELETE BUTTON (Only for Admin or Owner) --- */}
+                      {/* EDIT AND DELETE BUTTON (for Admin or Owner*/}
                       {user && (user.is_admin || user.id === scene.created_by) && (
-                        <button
-                          onClick={() => handleDelete(scene.id)}
-                          style={{
-                            background: '#dc3545',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            padding: '0.4rem 0.8rem',
-                            cursor: 'pointer',
-                            fontSize: '0.9rem'
-                          }}
-                          title="Törlés"
-                        >
-                          🗑️
-                        </button>
+                        <>
+                          <button
+                            onClick={() => setEditingScene(scene)}
+                            style={{ background: '#ffc107', color: 'black', border: 'none', borderRadius: '4px', padding: '0.4rem 0.8rem', cursor: 'pointer' }}
+                            title="Szerkesztés"
+                          >
+                            ✏️
+                          </button>
+
+                          <button
+                            onClick={() => handleDelete(scene.id)}
+                            style={{ background: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', padding: '0.4rem 0.8rem', cursor: 'pointer' }}
+                            title="Törlés"
+                          >
+                            🗑️
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>
