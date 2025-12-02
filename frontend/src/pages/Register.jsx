@@ -42,118 +42,92 @@ export default function Register() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '2rem auto', padding: '2rem' }}>
-      <h2>Regisztráció</h2>
-      
-      {error && (
-        <div style={{ 
-          padding: '1rem', 
-          marginBottom: '1rem', 
-          background: '#fee', 
-          color: '#c00',
-          borderRadius: '4px' 
-        }}>
-          {error}
-        </div>
-      )}
+    <div className="flex items-center justify-center min-h-[calc(100vh-80px)] px-4 py-8">
+      <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-xl p-8 shadow-2xl">
+        <h2 className="text-3xl font-bold text-white mb-6 text-center">Regisztráció</h2>
+        
+        {error && (
+          <div className="bg-red-900/50 border border-red-800 text-red-200 p-3 rounded-lg mb-6 text-sm text-center">
+            {error}
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem' }}>
-            Felhasználónév:
-          </label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            style={{ 
-              width: '100%', 
-              padding: '0.5rem',
-              fontSize: '1rem',
-              border: '1px solid #ccc',
-              borderRadius: '4px'
-            }}
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">
+              Felhasználónév
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none transition-all"
+              placeholder="Válassz felhasználónevet"
+            />
+          </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem' }}>
-            Email (opcionális):
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ 
-              width: '100%', 
-              padding: '0.5rem',
-              fontSize: '1rem',
-              border: '1px solid #ccc',
-              borderRadius: '4px'
-            }}
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">
+              Email (opcionális)
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none transition-all"
+              placeholder="pelda@email.com"
+            />
+          </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem' }}>
-            Jelszó:
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ 
-              width: '100%', 
-              padding: '0.5rem',
-              fontSize: '1rem',
-              border: '1px solid #ccc',
-              borderRadius: '4px'
-            }}
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">
+              Jelszó
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none transition-all"
+              placeholder="••••••••"
+            />
+          </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem' }}>
-            Jelszó megerősítése:
-          </label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            style={{ 
-              width: '100%', 
-              padding: '0.5rem',
-              fontSize: '1rem',
-              border: '1px solid #ccc',
-              borderRadius: '4px'
-            }}
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">
+              Jelszó megerősítése
+            </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none transition-all"
+              placeholder="••••••••"
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: '100%',
-            padding: '0.75rem',
-            fontSize: '1rem',
-            background: '#28a745',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: loading ? 'not-allowed' : 'pointer'
-          }}
-        >
-          {loading ? 'Regisztráció...' : 'Regisztráció'}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 mt-4 rounded-lg font-bold text-white transition-all ${
+              loading 
+                ? 'bg-gray-700 cursor-not-allowed' 
+                : 'bg-green-600 hover:bg-green-700 shadow-lg hover:shadow-green-900/30'
+            }`}
+          >
+            {loading ? 'Regisztráció...' : 'Regisztráció'}
+          </button>
+        </form>
 
-      <p style={{ marginTop: '1rem', textAlign: 'center' }}>
-        Van már fiókod? <Link to="/login">Jelentkezz be itt</Link>
-      </p>
+        <p className="mt-6 text-center text-gray-500 text-sm">
+          Van már fiókod?{' '}
+          <Link to="/login" className="text-white font-medium hover:text-red-500 transition-colors">
+            Jelentkezz be itt
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

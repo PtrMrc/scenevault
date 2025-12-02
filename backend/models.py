@@ -38,3 +38,6 @@ class UserRegister(SQLModel):
     username: str
     password: str
     email: Optional[str] = None
+
+class UserUpdate(SQLModel):
+    email: Optional[str] = None

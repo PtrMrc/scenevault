@@ -5,7 +5,7 @@ from typing import List, Optional
 from contextlib import asynccontextmanager
 
 from db import engine, create_db_and_tables
-from models import User, Movie, Scene, UserRegister
+from models import User, Movie, Scene, UserRegister, UserUpdate
 from auth import (
     get_password_hash, verify_password, create_access_token,
     get_current_user, require_admin, oauth2_scheme
@@ -61,6 +61,23 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 @app.get("/users/me")
 def read_users_me(current_user: User = Depends(get_current_user)):
     return {"id": current_user.id, "username": current_user.username, "email": current_user.email, "is_admin": current_user.is_admin}
+
+@app.put("/users/me", response_model=User)
+def update_user_me(update_data: UserUpdate, current_user: User = Depends(get_current_user)):
+    with Session(engine) as session:
+        # Load the user from DB to be sure we have the latest
+        db_user = session.get(User, current_user.id)
+        if not db_user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        # Update email if provided
+        if update_data.email is not None:
+            db_user.email = update_data.email
+
+        session.add(db_user)
+        session.commit()
+        session.refresh(db_user)
+        return db_user
 
 # Admin-only: list users
 @app.get("/users", response_model=List[dict])

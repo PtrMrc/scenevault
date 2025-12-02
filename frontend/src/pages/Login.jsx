@@ -7,7 +7,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -27,81 +27,65 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '2rem auto', padding: '2rem' }}>
-      <h2>Bejelentkezés</h2>
-      
-      {error && (
-        <div style={{ 
-          padding: '1rem', 
-          marginBottom: '1rem', 
-          background: '#fee', 
-          color: '#c00',
-          borderRadius: '4px' 
-        }}>
-          {error}
-        </div>
-      )}
+    <div className="flex items-center justify-center min-h-[calc(100vh-80px)] px-4">
+      <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-xl p-8 shadow-2xl">
+        <h2 className="text-3xl font-bold text-white mb-6 text-center">Bejelentkezés</h2>
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem' }}>
-            Felhasználónév:
-          </label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            style={{ 
-              width: '100%', 
-              padding: '0.5rem',
-              fontSize: '1rem',
-              border: '1px solid #ccc',
-              borderRadius: '4px'
-            }}
-          />
-        </div>
+        {error && (
+          <div className="bg-red-900/50 border border-red-800 text-red-200 p-3 rounded-lg mb-6 text-sm text-center">
+            {error}
+          </div>
+        )}
 
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem' }}>
-            Jelszó:
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ 
-              width: '100%', 
-              padding: '0.5rem',
-              fontSize: '1rem',
-              border: '1px solid #ccc',
-              borderRadius: '4px'
-            }}
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">
+              Felhasználónév
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none transition-all"
+              placeholder="Írd be a felhasználóneved"
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: '100%',
-            padding: '0.75rem',
-            fontSize: '1rem',
-            background: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: loading ? 'not-allowed' : 'pointer'
-          }}
-        >
-          {loading ? 'Bejelentkezés...' : 'Bejelentkezés'}
-        </button>
-      </form>
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">
+              Jelszó
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:ring-1 focus:ring-red-600 focus:outline-none transition-all"
+              placeholder="••••••••"
+            />
+          </div>
 
-      <p style={{ marginTop: '1rem', textAlign: 'center' }}>
-        Nincs még fiókod? <Link to="/register">Regisztrálj itt</Link>
-      </p>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg font-bold text-white transition-all ${
+              loading
+                ? 'bg-gray-700 cursor-not-allowed'
+                : 'bg-red-600 hover:bg-red-700 shadow-lg hover:shadow-red-900/30'
+            }`}
+          >
+            {loading ? 'Bejelentkezés...' : 'Bejelentkezés'}
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-gray-500 text-sm">
+          Nincs még fiókod?{' '}
+          <Link to="/register" className="text-white font-medium hover:text-red-500 transition-colors">
+            Regisztrálj itt
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

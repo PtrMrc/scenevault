@@ -219,105 +219,195 @@ export default function Scenes() {
 
       {/* --- ADD SCENE FORM --- */}
       {token && showAddForm && (
-        <div style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', background: '#f8f9fa' }}>
-          <h3>Új jelenet hozzáadása</h3>
-          {message && <p style={{ color: message.includes('Hiba') ? 'red' : 'green' }}>{message}</p>}
+        <div className="mb-8 bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-2xl animate-fade-in">
 
-          <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem' }}>
+          {/* Header with Close Button */}
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-bold text-white">Új jelenet hozzáadása</h3>
+            <button
+              onClick={() => setShowAddForm(false)}
+              className="text-gray-500 hover:text-white transition-colors"
+            >
+              ✕
+            </button>
+          </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          {/* Success/Error Message */}
+          {message && (
+             <p className={`mb-4 p-3 rounded ${message.includes('Hiba') ? 'bg-red-900/50 text-red-200 border border-red-800' : 'bg-green-900/50 text-green-200 border border-green-800'}`}>
+               {message}
+             </p>
+          )}
+
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            {/* Movie Selection - Full Width */}
+            <div className="md:col-span-2">
+              <label className="block text-xs text-gray-400 mb-1 ml-1">Válassz filmet</label>
               <select
                 value={newScene.movie_id}
                 onChange={e => setNewScene({...newScene, movie_id: e.target.value})}
                 required
-                style={{ padding: '0.5rem' }}
+                className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none appearance-none"
               >
                 <option value="">-- Válassz filmet --</option>
                 {movies.map(m => <option key={m.id} value={m.id}>{m.title}</option>)}
               </select>
+            </div>
 
+            {/* Scene Title - Full Width */}
+            <div className="md:col-span-2">
               <input
                 placeholder="Jelenet címe"
                 value={newScene.title}
                 onChange={e => setNewScene({...newScene, title: e.target.value})}
                 required
-                style={{ padding: '0.5rem' }}
+                className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none"
               />
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <input
-                placeholder="Kezdés (pl. 01:20:00)"
-                value={newScene.start_timestamp}
-                onChange={e => setNewScene({...newScene, start_timestamp: e.target.value})}
-                style={{ padding: '0.5rem', flex: 1 }}
-              />
-              <input
-                placeholder="Vége (pl. 01:25:00)"
-                value={newScene.end_timestamp}
-                onChange={e => setNewScene({...newScene, end_timestamp: e.target.value})}
-                style={{ padding: '0.5rem', flex: 1 }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <input
-                placeholder="YouTube Videó Link"
-                value={newScene.video_url}
-                onChange={e => setNewScene({...newScene, video_url: e.target.value})}
-                style={{ padding: '0.5rem', flex: 1 }}
-              />
-              <input
-                placeholder="Kép URL (Opcionális)"
-                value={newScene.image_url}
-                onChange={e => setNewScene({...newScene, image_url: e.target.value})}
-                style={{ padding: '0.5rem', flex: 1 }}
-              />
-            </div>
-
+            {/* Timestamps - Split Row */}
             <input
-              placeholder="Címkék (vesszővel elválasztva: akció, vicces, dráma)"
-              value={newScene.tags}
-              onChange={e => setNewScene({...newScene, tags: e.target.value})}
-              style={{ padding: '0.5rem' }}
+              placeholder="Kezdés (pl. 01:20:00)"
+              value={newScene.start_timestamp}
+              onChange={e => setNewScene({...newScene, start_timestamp: e.target.value})}
+              className="bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none"
+            />
+            <input
+              placeholder="Vége (pl. 01:25:00)"
+              value={newScene.end_timestamp}
+              onChange={e => setNewScene({...newScene, end_timestamp: e.target.value})}
+              className="bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none"
             />
 
-            <textarea
-              placeholder="Rövid leírás a jelenetről..."
-              value={newScene.description}
-              onChange={e => setNewScene({...newScene, description: e.target.value})}
-              style={{ padding: '0.5rem', height: '80px' }}
+            {/* URLs - Split Row */}
+            <input
+              placeholder="YouTube Videó Link"
+              value={newScene.video_url}
+              onChange={e => setNewScene({...newScene, video_url: e.target.value})}
+              className="bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none"
+            />
+            <input
+              placeholder="Kép URL (Opcionális)"
+              value={newScene.image_url}
+              onChange={e => setNewScene({...newScene, image_url: e.target.value})}
+              className="bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none"
             />
 
-            <button type="submit" style={{ padding: '0.75rem', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-              Mentés
-            </button>
+            {/* Tags - Full Width */}
+            <div className="md:col-span-2">
+              <input
+                placeholder="Címkék (vesszővel elválasztva: akció, vicces, dráma)"
+                value={newScene.tags}
+                onChange={e => setNewScene({...newScene, tags: e.target.value})}
+                className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none"
+              />
+            </div>
+
+            {/* Description - Full Width */}
+            <div className="md:col-span-2">
+              <textarea
+                placeholder="Rövid leírás a jelenetről..."
+                value={newScene.description}
+                onChange={e => setNewScene({...newScene, description: e.target.value})}
+                className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none h-24"
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div className="md:col-span-2 flex justify-end">
+              <button
+                type="submit"
+                className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors shadow-lg hover:shadow-red-900/20"
+              >
+                Mentés
+              </button>
+            </div>
           </form>
         </div>
       )}
 
+      {/* --- EDIT MODAL OVERLAY --- */}
       {editingScene && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
-        }}>
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h2>Jelenet szerkesztése</h2>
-            <form onSubmit={handleUpdateScene} style={{ display: 'grid', gap: '1rem' }}>
-              <input placeholder="Cím" value={editingScene.title} onChange={e => setEditingScene({...editingScene, title: e.target.value})} required style={{ padding: '0.5rem' }} />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-2xl bg-gray-900 border border-gray-800 rounded-xl shadow-2xl p-8 animate-fade-in max-h-[90vh] overflow-y-auto">
 
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <input placeholder="Start" value={editingScene.start_timestamp} onChange={e => setEditingScene({...editingScene, start_timestamp: e.target.value})} style={{ flex: 1, padding: '0.5rem' }} />
-                <input placeholder="End" value={editingScene.end_timestamp} onChange={e => setEditingScene({...editingScene, end_timestamp: e.target.value})} style={{ flex: 1, padding: '0.5rem' }} />
+            <h2 className="text-2xl font-bold text-white mb-6 border-b border-gray-800 pb-2">
+              Jelenet szerkesztése
+            </h2>
+
+            <form onSubmit={handleUpdateScene} className="space-y-4">
+              <div>
+                <label className="block text-xs text-gray-500 mb-1 ml-1">Cím</label>
+                <input
+                  value={editingScene.title}
+                  onChange={e => setEditingScene({...editingScene, title: e.target.value})} 
+                  required
+                  className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none" 
+                />
               </div>
 
-              <input placeholder="Video URL" value={editingScene.video_url} onChange={e => setEditingScene({...editingScene, video_url: e.target.value})} style={{ padding: '0.5rem' }} />
-              <input placeholder="Tags" value={editingScene.tags} onChange={e => setEditingScene({...editingScene, tags: e.target.value})} style={{ padding: '0.5rem' }} />
-              <textarea placeholder="Leírás" value={editingScene.description} onChange={e => setEditingScene({...editingScene, description: e.target.value})} style={{ padding: '0.5rem', height: '100px' }} />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1 ml-1">Kezdés</label>
+                  <input
+                    value={editingScene.start_timestamp}
+                    onChange={e => setEditingScene({...editingScene, start_timestamp: e.target.value})} 
+                    className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1 ml-1">Vége</label>
+                  <input
+                    value={editingScene.end_timestamp}
+                    onChange={e => setEditingScene({...editingScene, end_timestamp: e.target.value})} 
+                    className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none" 
+                  />
+                </div>
+              </div>
 
-              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
-                <button type="button" onClick={() => setEditingScene(null)} style={{ padding: '0.5rem 1rem', background: '#6c757d', color: 'white', border: 'none' }}>Mégse</button>
-                <button type="submit" style={{ padding: '0.5rem 1rem', background: '#007bff', color: 'white', border: 'none' }}>Frissítés</button>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                   <label className="block text-xs text-gray-500 mb-1 ml-1">Videó URL</label>
+                   <input
+                     value={editingScene.video_url}
+                     onChange={e => setEditingScene({...editingScene, video_url: e.target.value})} 
+                     className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none text-sm" 
+                   />
+                </div>
+                <div>
+                   <label className="block text-xs text-gray-500 mb-1 ml-1">Címkék</label>
+                   <input
+                     value={editingScene.tags}
+                     onChange={e => setEditingScene({...editingScene, tags: e.target.value})} 
+                     className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none" 
+                   />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-500 mb-1 ml-1">Leírás</label>
+                <textarea
+                  value={editingScene.description}
+                  onChange={e => setEditingScene({...editingScene, description: e.target.value})} 
+                  className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none h-32" 
+                />
+              </div>
+
+              <div className="flex gap-3 justify-end pt-4">
+                 <button
+                   type="button"
+                   onClick={() => setEditingScene(null)}
+                   className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
+                 >
+                   Mégse
+                 </button>
+                 <button
+                   type="submit"
+                   className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors"
+                 >
+                   Frissítés
+                 </button>
               </div>
             </form>
           </div>

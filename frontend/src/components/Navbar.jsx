@@ -5,14 +5,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
 
   return (
-    <nav style={{
-      padding: "1rem",
-      background: "#222",
-      color: "white",
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center"
-    }}>
+    <nav className="sticky top-0 z-50 w-full bg-black/90 backdrop-blur-sm border-b border-gray-800 px-6 py-4 flex justify-between items-center">
       <Link to="/" style={{ color: "white", textDecoration: "none" }}>
         <h1>🎬 SceneVault</h1>
       </Link>
@@ -26,7 +19,9 @@ export default function Navbar() {
               </Link>
             )}
 
-            <span>Üdv, {user.username}!</span>
+            <Link to="/profile" style={{ color: "white", textDecoration: "underline", cursor: "pointer" }}>
+               Üdv, {user.username}!
+            </Link>
             <button onClick={logout} style={{ padding: "0.5rem 1rem" }}>
               Kijelentkezés
             </button>

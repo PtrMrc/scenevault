@@ -168,104 +168,144 @@ export default function Movies() {
 
       {/* --- ADD MOVIE FORM (Only visible if logged in AND not currently editing) --- */}
       {token && !editingMovie && showAddForm && (
-        <div style={{ marginBottom: '2rem', padding: '1rem', border: '1px solid #ccc', borderRadius: '8px', background: '#f9f9f9' }}>
-          <h3>Új film hozzáadása</h3>
-          {message && <p style={{ color: message.includes('Hiba') ? 'red' : 'green' }}>{message}</p>}
+        <div className="mb-8 bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-2xl animate-fade-in">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-bold text-white">Új film hozzáadása</h3>
+            <button onClick={() => setShowAddForm(false)} className="text-gray-500 hover:text-white">✕</button>
+          </div>
 
-          <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '0.5rem' }}>
-            <input
-              placeholder="Cím"
-              value={newMovie.title}
-              onChange={e => setNewMovie({...newMovie, title: e.target.value})}
-              required
-              style={{ padding: '0.5rem' }}
-            />
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {message && (
+             <p className={`mb-4 p-3 rounded ${message.includes('Hiba') ? 'bg-red-900/50 text-red-200' : 'bg-green-900/50 text-green-200'}`}>
+               {message}
+             </p>
+          )}
+
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Title - Full Width */}
+            <div className="md:col-span-2">
               <input
-                type="number"
-                placeholder="Év"
-                value={newMovie.year}
-                onChange={e => setNewMovie({...newMovie, year: e.target.value})}
-                style={{ padding: '0.5rem', flex: 1 }}
-              />
-              <input
-                placeholder="Rendező"
-                value={newMovie.director}
-                onChange={e => setNewMovie({...newMovie, director: e.target.value})}
-                style={{ padding: '0.5rem', flex: 2 }}
+                placeholder="Cím"
+                value={newMovie.title}
+                onChange={e => setNewMovie({...newMovie, title: e.target.value})}
+                required
+                className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none"
               />
             </div>
+
+            {/* Year & Director */}
             <input
-              placeholder="Poszter URL (kép link)"
-              value={newMovie.poster_url}
-              onChange={e => setNewMovie({...newMovie, poster_url: e.target.value})}
-              style={{ padding: '0.5rem' }}
+              type="number"
+              placeholder="Év"
+              value={newMovie.year}
+              onChange={e => setNewMovie({...newMovie, year: e.target.value})}
+              className="bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none"
             />
-            <textarea
-              placeholder="Leírás / Történet"
-              value={newMovie.description}
-              onChange={e => setNewMovie({...newMovie, description: e.target.value})}
-              style={{ padding: '0.5rem', height: '60px' }}
+            <input
+              placeholder="Rendező"
+              value={newMovie.director}
+              onChange={e => setNewMovie({...newMovie, director: e.target.value})}
+              className="bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none"
             />
-            <button type="submit" style={{ padding: '0.5rem', background: '#28a745', color: 'white', border: 'none', cursor: 'pointer' }}>
-              Mentés
-            </button>
+
+            {/* Poster - Full Width */}
+            <div className="md:col-span-2">
+              <input
+                placeholder="Poszter URL (kép link)"
+                value={newMovie.poster_url}
+                onChange={e => setNewMovie({...newMovie, poster_url: e.target.value})}
+                className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none"
+              />
+            </div>
+
+            {/* Description - Full Width */}
+            <div className="md:col-span-2">
+              <textarea
+                placeholder="Leírás / Történet"
+                value={newMovie.description}
+                onChange={e => setNewMovie({...newMovie, description: e.target.value})}
+                className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none h-32"
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div className="md:col-span-2 flex justify-end">
+              <button type="submit" className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors">
+                Mentés
+              </button>
+            </div>
           </form>
         </div>
       )}
 
       {/* --- EDIT MODAL OVERLAY --- */}
       {editingMovie && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
-        }}>
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '500px' }}>
-            <h2 style={{ marginTop: 0 }}>Film szerkesztése</h2>
-            <form onSubmit={handleUpdate} style={{ display: 'grid', gap: '1rem' }}>
-              <input
-                placeholder="Cím"
-                value={editingMovie.title}
-                onChange={e => setEditingMovie({...editingMovie, title: e.target.value})}
-                required
-                style={{ padding: '0.5rem' }}
-              />
-              <input
-                placeholder="Év"
-                value={editingMovie.year}
-                onChange={e => setEditingMovie({...editingMovie, year: e.target.value})}
-                style={{ padding: '0.5rem' }}
-              />
-              <input
-                placeholder="Rendező"
-                value={editingMovie.director}
-                onChange={e => setEditingMovie({...editingMovie, director: e.target.value})}
-                style={{ padding: '0.5rem' }}
-              />
-              <input
-                placeholder="Poszter URL"
-                value={editingMovie.poster_url}
-                onChange={e => setEditingMovie({...editingMovie, poster_url: e.target.value})}
-                style={{ padding: '0.5rem' }}
-              />
-              <textarea
-                placeholder="Leírás"
-                value={editingMovie.description}
-                onChange={e => setEditingMovie({...editingMovie, description: e.target.value})}
-                style={{ padding: '0.5rem', height: '100px' }}
-              />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg bg-gray-900 border border-gray-800 rounded-xl shadow-2xl p-8 animate-fade-in max-h-[90vh] overflow-y-auto">
 
-              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+            <h2 className="text-2xl font-bold text-white mb-6 border-b border-gray-800 pb-2">
+              Film szerkesztése
+            </h2>
+
+            <form onSubmit={handleUpdate} className="space-y-4">
+              <div>
+                <label className="block text-xs text-gray-500 mb-1 ml-1">Cím</label>
+                <input
+                  value={editingMovie.title}
+                  onChange={e => setEditingMovie({...editingMovie, title: e.target.value})} 
+                  required
+                  className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1 ml-1">Év</label>
+                  <input
+                    type="number"
+                    value={editingMovie.year}
+                    onChange={e => setEditingMovie({...editingMovie, year: e.target.value})} 
+                    className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1 ml-1">Rendező</label>
+                  <input
+                    value={editingMovie.director}
+                    onChange={e => setEditingMovie({...editingMovie, director: e.target.value})} 
+                    className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-500 mb-1 ml-1">Poszter URL</label>
+                <input
+                  value={editingMovie.poster_url}
+                  onChange={e => setEditingMovie({...editingMovie, poster_url: e.target.value})} 
+                  className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-500 mb-1 ml-1">Leírás</label>
+                <textarea
+                  value={editingMovie.description}
+                  onChange={e => setEditingMovie({...editingMovie, description: e.target.value})} 
+                  className="w-full bg-black border border-gray-700 rounded-lg p-3 text-white focus:border-red-600 focus:outline-none h-32"
+                />
+              </div>
+
+              <div className="flex gap-3 justify-end pt-4">
                 <button
                   type="button"
                   onClick={() => setEditingMovie(null)}
-                  style={{ padding: '0.5rem 1rem', background: '#6c757d', color: 'white', border: 'none', cursor: 'pointer' }}
+                  className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
                 >
                   Mégse
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '0.5rem 1rem', background: '#007bff', color: 'white', border: 'none', cursor: 'pointer' }}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors"
                 >
                   Frissítés
                 </button>
