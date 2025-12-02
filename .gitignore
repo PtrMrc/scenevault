@@ -235,3 +235,5 @@ dist-ssr
 database.db
 *.sqlite
 *.db
+
+examples.txt

@@ -25,7 +25,11 @@ class Scene(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     movie_id: int = Field(foreign_key="movie.id")
     title: str
-    timestamp: Optional[str] = None
+    start_timestamp: Optional[str] = None
+    end_timestamp: Optional[str] = None
+    video_url: Optional[str] = None
+    image_url: Optional[str] = None
+    tags: Optional[str] = None
     description: Optional[str] = None
     created_by: Optional[int] = Field(default=None, foreign_key="user.id")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
