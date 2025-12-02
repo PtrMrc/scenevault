@@ -76,7 +76,7 @@ export default function Home() {
                 <em>"{scene.description ? scene.description.substring(0, 50) + '...' : ''}"</em>
               </p>
               <div style={{ marginTop: '1rem', fontSize: '0.85rem', color: '#888' }}>
-                Időbélyeg: {scene.timestamp || '00:00'}
+                Idő: {scene.start_timestamp || '00:00'} - {scene.end_timestamp || '?'}
               </div>
             </div>
           </div>

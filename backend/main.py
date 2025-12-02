@@ -165,8 +165,12 @@ def update_scene(scene_id: int, updated: Scene, current_user: User = Depends(get
         if scene.created_by != current_user.id and not current_user.is_admin:
             raise HTTPException(status_code=403, detail="Not allowed")
         scene.title = updated.title
-        scene.timestamp = updated.timestamp
         scene.description = updated.description
+        scene.start_timestamp = updated.start_timestamp
+        scene.end_timestamp = updated.end_timestamp
+        scene.video_url = updated.video_url
+        scene.image_url = updated.image_url
+        scene.tags = updated.tags
         session.add(scene)
         session.commit()
         session.refresh(scene)
