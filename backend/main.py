@@ -69,6 +69,19 @@ def list_users(admin: User = Depends(require_admin)):
         users = session.exec(select(User)).all()
         return [{"id": u.id, "username": u.username, "email": u.email, "is_admin": u.is_admin} for u in users]
 
+@app.delete("/users/{user_id}")
+def delete_user(user_id: int, admin: User = Depends(require_admin)):
+    with Session(engine) as session:
+        user = session.get(User, user_id)
+        if not user:
+             raise HTTPException(status_code=404, detail="User not found")
+        if user.id == admin.id:
+            raise HTTPException(status_code=400, detail="You cannot delete yourself")
+
+        session.delete(user)
+        session.commit()
+        return {"ok": True}
+
 # ---------- MOVIES ----------
 @app.post("/movies")
 def create_movie(movie: Movie, current_user: User = Depends(get_current_user)):

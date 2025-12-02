@@ -20,6 +20,12 @@ export default function Navbar() {
       <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
         {user ? (
           <>
+            {user.is_admin && (
+              <Link to="/admin" style={{ color: "#ffc107", textDecoration: "none", fontWeight: "bold" }}>
+                Admin
+              </Link>
+            )}
+
             <span>Üdv, {user.username}!</span>
             <button onClick={logout} style={{ padding: "0.5rem 1rem" }}>
               Kijelentkezés
