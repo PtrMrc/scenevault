@@ -27,6 +27,8 @@ export default function Movies() {
   const [totalPages, setTotalPages] = useState(1);
   const limit = 5;
 
+  const [showAddForm, setShowAddForm] = useState(false);
+
   // 1. Fetch Movies (Handles both "All" and "Search")
   const fetchMovies = async (query = '') => {
     setLoading(true);
@@ -81,6 +83,7 @@ export default function Movies() {
         setMessage('Film sikeresen hozzáadva!');
         setNewMovie({ title: '', year: '', director: '', description: '', poster_url: '' });
         fetchMovies(searchQuery); // Refresh list
+        setShowAddForm(false);
       } else {
         setMessage('Hiba történt a hozzáadáskor.');
       }
@@ -143,8 +146,28 @@ export default function Movies() {
         )}
       </form>
 
+      {/* 2. TOGGLE BUTTON (Only visible if logged in) */}
+      {token && (
+        <div style={{ marginBottom: '1rem', textAlign: 'right' }}>
+          <button
+            onClick={() => setShowAddForm(!showAddForm)}
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: showAddForm ? '#6c757d' : '#28a745', // Grey if open, Green if closed
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            {showAddForm ? '✕ Mégse' : '+ Új film hozzáadása'}
+          </button>
+        </div>
+      )}
+
       {/* --- ADD MOVIE FORM (Only visible if logged in AND not currently editing) --- */}
-      {token && !editingMovie && (
+      {token && !editingMovie && showAddForm && (
         <div style={{ marginBottom: '2rem', padding: '1rem', border: '1px solid #ccc', borderRadius: '8px', background: '#f9f9f9' }}>
           <h3>Új film hozzáadása</h3>
           {message && <p style={{ color: message.includes('Hiba') ? 'red' : 'green' }}>{message}</p>}

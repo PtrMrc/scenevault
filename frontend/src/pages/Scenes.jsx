@@ -27,6 +27,8 @@ export default function Scenes() {
   const [totalPages, setTotalPages] = useState(1);
   const limit = 5;
 
+  const [showAddForm, setShowAddForm] = useState(false);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -138,7 +140,8 @@ export default function Scenes() {
           title: '', description: '', start_timestamp: '', end_timestamp: '',
           video_url: '', image_url: '', tags: ''
         });
-        fetchData();
+        fetchData(searchQuery, page);
+        setShowAddForm(false);
       } else {
         setMessage('Hiba történt.');
       }
@@ -194,8 +197,28 @@ export default function Scenes() {
         )}
       </form>
 
-      {/* --- ADD SCENE FORM --- */}
+      {/* 2. TOGGLE BUTTON */}
       {token && (
+        <div style={{ marginBottom: '1rem', textAlign: 'right' }}>
+          <button
+            onClick={() => setShowAddForm(!showAddForm)}
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: showAddForm ? '#6c757d' : '#28a745',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            {showAddForm ? '✕ Mégse' : '+ Új jelenet hozzáadása'}
+          </button>
+        </div>
+      )}
+
+      {/* --- ADD SCENE FORM --- */}
+      {token && showAddForm && (
         <div style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', background: '#f8f9fa' }}>
           <h3>Új jelenet hozzáadása</h3>
           {message && <p style={{ color: message.includes('Hiba') ? 'red' : 'green' }}>{message}</p>}
