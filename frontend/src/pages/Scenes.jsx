@@ -19,16 +19,26 @@ export default function Scenes() {
   });
   const [message, setMessage] = useState('');
 
+  const [searchQuery, setSearchQuery] = useState('');
+
   useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
+  const fetchData = async (query = '') => {
+    setLoading(true);
     try {
-      const [scenesRes, moviesRes] = await Promise.all([
-        fetch('http://localhost:8000/scenes?limit=100'),
-        fetch('http://localhost:8000/movies?limit=100')
-      ]);
+      // 1. Fetch Scenes
+      let scenesUrl = 'http://localhost:8000/scenes?limit=100';
+      if (query) {
+        scenesUrl = `http://localhost:8000/scenes/search?q=${encodeURIComponent(query)}`;
+      }
+
+      const scenesRes = await fetch(scenesUrl);
+
+      // 2. Fetch Movies (we always need these for the titles)
+      // Optimization: In a real app, you might cache this or fetch once.
+      const moviesRes = await fetch('http://localhost:8000/movies?limit=100');
 
       if (scenesRes.ok && moviesRes.ok) {
         setScenes(await scenesRes.json());
@@ -39,6 +49,21 @@ export default function Scenes() {
     } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchData(searchQuery);
+  };
+
+  const handleTagClick = (tag) => {
+    const cleanTag = tag.trim();
+    setSearchQuery(cleanTag);
+    fetchData(cleanTag);
   };
 
   const getMovieTitle = (id) => {
@@ -115,7 +140,29 @@ export default function Scenes() {
     <div style={{ maxWidth: '900px', margin: '2rem auto', padding: '1rem' }}>
       <h1>Jelenetek</h1>
 
-      {/* --- EXTENDED ADD FORM --- */}
+      <form onSubmit={handleSearch} style={{ marginBottom: '2rem', display: 'flex', gap: '0.5rem' }}>
+        <input
+          type="text"
+          placeholder="Keresés cím, leírás vagy címke (#tag) alapján..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ flex: 1, padding: '0.75rem', fontSize: '1rem' }}
+        />
+        <button type="submit" style={{ padding: '0.75rem 1.5rem', cursor: 'pointer', background: '#333', color: 'white', border: 'none' }}>
+          Keresés
+        </button>
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={() => { setSearchQuery(''); fetchData(''); }}
+            style={{ padding: '0.75rem', cursor: 'pointer', background: '#ddd', border: 'none' }}
+          >
+            X
+          </button>
+        )}
+      </form>
+
+      {/* --- ADD SCENE FORM --- */}
       {token && (
         <div style={{ marginBottom: '2rem', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px', background: '#f8f9fa' }}>
           <h3>Új jelenet hozzáadása</h3>
@@ -250,11 +297,22 @@ export default function Scenes() {
 
                   <p style={{ lineHeight: '1.6', color: '#555' }}>{scene.description}</p>
 
-                  {/* Tags */}
+                  {/* TAGS SECTION: CLICKABLE */}
                   {scene.tags && (
                     <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                       {scene.tags.split(',').map((tag, idx) => (
-                        <span key={idx} style={{ background: '#ffc107', color: '#333', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.8rem' }}>
+                        <span
+                          key={idx}
+                          onClick={() => handleTagClick(tag)}
+                          style={{
+                            background: '#ffc107',
+                            color: '#333',
+                            padding: '0.2rem 0.6rem',
+                            borderRadius: '4px',
+                            fontSize: '0.8rem',
+                            cursor: 'pointer'
+                          }}
+                        >
                           #{tag.trim()}
                         </span>
                       ))}

@@ -157,7 +157,9 @@ def search_scenes(q: str, skip: int = 0, limit: int = 50):
         # Search in title and description
         scenes = session.exec(
             select(Scene).where(
-                (Scene.title.contains(q)) | (Scene.description.contains(q))
+                (Scene.title.contains(q)) |
+                (Scene.description.contains(q)) |
+                (Scene.tags.contains(q))
             ).offset(skip).limit(limit)
         ).all()
         return scenes
