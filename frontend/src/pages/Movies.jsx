@@ -3,17 +3,17 @@ import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
 export default function Movies() {
-  const { token, user } = useAuth(); 
+  const { token, user } = useAuth();
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [searchQuery, setSearchQuery] = useState('');
   const [editingMovie, setEditingMovie] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 8; // Increased limit slightly for grid view
+  const limit = 8;
 
   const [newMovie, setNewMovie] = useState({
     title: '', year: '', director: '', description: '', poster_url: ''
@@ -31,7 +31,7 @@ export default function Movies() {
       const res = await fetch(url);
       if (res.ok) {
         const result = await res.json();
-        setMovies(result.data); 
+        setMovies(result.data);
         setTotalPages(Math.ceil(result.total / limit));
       }
     } catch (err) { console.error(err); } finally { setLoading(false); }
@@ -84,10 +84,10 @@ export default function Movies() {
     <div className="max-w-7xl mx-auto px-6 py-10">
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <h1 className="text-3xl font-bold text-white">Filmek</h1>
-        
+
         {/* Toggle Button */}
         {token && (
-          <button 
+          <button
             onClick={() => setShowAddForm(!showAddForm)}
             className={`px-6 py-2 rounded-lg font-bold text-white transition-all ${
               showAddForm ? 'bg-gray-700 hover:bg-gray-600' : 'bg-red-600 hover:bg-red-700 shadow-lg hover:shadow-red-900/30'
@@ -100,19 +100,19 @@ export default function Movies() {
 
       {/* SEARCH BAR */}
       <form onSubmit={handleSearch} className="mb-8 flex gap-2">
-        <input 
-          type="text" 
-          placeholder="Keresés cím, rendező vagy leírás alapján..." 
+        <input
+          type="text"
+          placeholder="Keresés cím, rendező vagy leírás alapján..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-4 text-white focus:border-red-600 focus:outline-none transition-colors"
+          className="flex-1 bg-gray-900 border border-gray-700 rounded-lg p-4 text-white placeholder-gray-500 focus:border-red-600 focus:outline-none transition-colors"
         />
         <button type="submit" className="px-8 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors border border-gray-700">
           Keresés
         </button>
         {searchQuery && (
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={() => { setSearchQuery(''); setPage(1); fetchMovies('', 1); }}
             className="px-4 bg-gray-800 hover:bg-red-900/50 text-gray-400 hover:text-red-400 rounded-lg border border-gray-700 transition-colors"
           >
@@ -121,7 +121,7 @@ export default function Movies() {
         )}
       </form>
 
-      {/* ADD FORM (Using the styled version we made earlier) */}
+      {/* ADD FORM */}
       {showAddForm && (
         <div className="mb-8 bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-2xl animate-fade-in">
           <h3 className="text-xl font-bold text-white mb-6">Új film hozzáadása</h3>
@@ -178,10 +178,10 @@ export default function Movies() {
                   </div>
                 </div>
               </Link>
-              
+
               {/* Edit Button (Absolute Positioned) */}
               {user && user.is_admin && (
-                <button 
+                <button
                   onClick={() => setEditingMovie(movie)}
                   className="absolute top-2 right-2 bg-black/60 hover:bg-yellow-600 text-white p-2 rounded-full backdrop-blur-sm transition-colors opacity-0 group-hover:opacity-100"
                   title="Szerkesztés"
@@ -197,20 +197,20 @@ export default function Movies() {
       {/* PAGINATION */}
       {!loading && totalPages > 1 && (
         <div className="mt-12 flex justify-center items-center gap-4">
-          <button 
-            disabled={page === 1} 
+          <button
+            disabled={page === 1}
             onClick={() => setPage(p => p - 1)}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${page === 1 ? 'text-gray-600 cursor-not-allowed' : 'bg-gray-800 hover:bg-gray-700 text-white'}`}
           >
             ← Előző
           </button>
-          
+
           <span className="text-gray-400 text-sm">
             <span className="text-white font-bold">{page}</span> / {totalPages}
           </span>
-          
-          <button 
-            disabled={page >= totalPages} 
+
+          <button
+            disabled={page >= totalPages}
             onClick={() => setPage(p => p + 1)}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${page >= totalPages ? 'text-gray-600 cursor-not-allowed' : 'bg-gray-800 hover:bg-gray-700 text-white'}`}
           >

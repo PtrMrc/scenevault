@@ -21,7 +21,7 @@ export default function SceneDetail() {
             const movieData = await movieRes.json();
             // In case your endpoint returns {data: ...} or just the object, check structure
             // Usually get_movie returns the object directly based on your backend code
-            setMovie(movieData); 
+            setMovie(movieData);
           }
         }
       } catch (err) {
@@ -53,22 +53,22 @@ export default function SceneDetail() {
         {/* Video Player - Cinema Mode */}
         <div className="relative aspect-video bg-black rounded-xl overflow-hidden shadow-2xl border border-gray-800">
           {scene.video_url && (
-            <iframe 
-              src={getEmbedUrl(scene.video_url)} 
-              title={scene.title} 
+            <iframe
+              src={getEmbedUrl(scene.video_url)}
+              title={scene.title}
               className="absolute top-0 left-0 w-full h-full"
-              allowFullScreen 
+              allowFullScreen
             />
           )}
         </div>
 
         {/* Info Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
+
           {/* Main Content */}
           <div className="lg:col-span-2">
             <h1 className="text-3xl font-extrabold text-white mb-2">{scene.title}</h1>
-            
+
             {movie && (
               <Link to={`/movies/${movie.id}`} className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 font-medium mb-6 transition-colors">
                 🎬 {movie.title}
@@ -87,7 +87,7 @@ export default function SceneDetail() {
           <div className="space-y-4">
              <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
                 <h3 className="text-xs font-bold text-gray-500 uppercase mb-4">Adatok</h3>
-                
+
                 <div className="space-y-3">
                   <div className="flex justify-between border-b border-gray-800 pb-2">
                     <span className="text-gray-400">Kezdés</span>

@@ -34,16 +34,16 @@ export default function MovieDetail() {
       <Link to="/movies" className="text-gray-400 hover:text-white transition-colors flex items-center gap-2 mb-6">
         ← Vissza a filmekhez
       </Link>
-      
+
       {/* Movie Info Section */}
       <div className="flex flex-col md:flex-row gap-8 bg-gray-900/50 p-8 rounded-2xl border border-gray-800 shadow-xl">
         {/* Poster */}
         <div className="flex-shrink-0 mx-auto md:mx-0">
           {movie.poster_url ? (
-            <img 
-              src={movie.poster_url} 
-              alt={movie.title} 
-              className="w-64 rounded-lg shadow-2xl border border-gray-800" 
+            <img
+              src={movie.poster_url}
+              alt={movie.title}
+              className="w-64 rounded-lg shadow-2xl border border-gray-800"
             />
           ) : (
              <div className="w-64 h-96 bg-gray-800 rounded-lg flex items-center justify-center text-4xl">🎬</div>
@@ -56,7 +56,7 @@ export default function MovieDetail() {
             {movie.title} <span className="text-gray-500 font-normal text-3xl">({movie.year})</span>
           </h1>
           <p className="text-red-500 font-medium mb-6">{movie.director}</p>
-          
+
           <div className="bg-black/30 p-6 rounded-xl border border-gray-800">
             <h3 className="text-sm font-bold text-gray-400 uppercase mb-2">Történet</h3>
             <p className="text-gray-300 leading-relaxed text-lg">
@@ -71,7 +71,7 @@ export default function MovieDetail() {
       {/* Linked Scenes Section */}
       <div className="flex justify-between items-end mb-6">
         <h2 className="text-2xl font-bold text-white">
-          Jelenetek ebből a filmből 
+          Jelenetek ebből a filmből
           <span className="ml-3 text-sm bg-gray-800 text-gray-400 py-1 px-3 rounded-full">{scenes.length}</span>
         </h2>
       </div>

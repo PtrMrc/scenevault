@@ -9,7 +9,7 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { register, login } = useAuth();
   const navigate = useNavigate();
 
@@ -45,7 +45,7 @@ export default function Register() {
     <div className="flex items-center justify-center min-h-[calc(100vh-80px)] px-4 py-8">
       <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-xl p-8 shadow-2xl">
         <h2 className="text-3xl font-bold text-white mb-6 text-center">Regisztráció</h2>
-        
+
         {error && (
           <div className="bg-red-900/50 border border-red-800 text-red-200 p-3 rounded-lg mb-6 text-sm text-center">
             {error}
@@ -112,8 +112,8 @@ export default function Register() {
             type="submit"
             disabled={loading}
             className={`w-full py-3 mt-4 rounded-lg font-bold text-white transition-all ${
-              loading 
-                ? 'bg-gray-700 cursor-not-allowed' 
+              loading
+                ? 'bg-gray-700 cursor-not-allowed'
                 : 'bg-green-600 hover:bg-green-700 shadow-lg hover:shadow-green-900/30'
             }`}
           >

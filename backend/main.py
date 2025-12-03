@@ -102,7 +102,6 @@ def delete_user(user_id: int, admin: User = Depends(require_admin)):
 # ---------- MOVIES ----------
 @app.post("/movies")
 def create_movie(movie: Movie, current_user: User = Depends(get_current_user)):
-    # allow any logged-in user to create a movie? If you want only admin, change dependency to require_admin
     with Session(engine) as session:
         session.add(movie)
         session.commit()

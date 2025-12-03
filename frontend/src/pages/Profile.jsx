@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Profile() {
-  const { user, token } = useAuth();
+  const {user, token, refreshUser } = useAuth();
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
@@ -28,6 +28,7 @@ export default function Profile() {
 
       if (res.ok) {
         setMessage('Profil sikeresen frissítve!');
+        await refreshUser();
       } else {
         setIsError(true);
         setMessage('Hiba történt a mentéskor.');

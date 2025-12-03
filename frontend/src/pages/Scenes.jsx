@@ -11,7 +11,7 @@ export default function Scenes() {
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 6; 
+  const limit = 6;
 
   const [editingScene, setEditingScene] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -29,7 +29,7 @@ export default function Scenes() {
       if (query) {
         scenesUrl = `http://localhost:8000/scenes/search?q=${encodeURIComponent(query)}&skip=${skip}&limit=${limit}`;
       }
-      
+
       const [scenesRes, moviesRes] = await Promise.all([
         fetch(scenesUrl), fetch('http://localhost:8000/movies?limit=100')
       ]);
@@ -98,7 +98,7 @@ export default function Scenes() {
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <h1 className="text-3xl font-bold text-white">Jelenetek</h1>
         {token && (
-          <button 
+          <button
             onClick={() => setShowAddForm(!showAddForm)}
             className={`px-6 py-2 rounded-lg font-bold text-white transition-all ${showAddForm ? 'bg-gray-700' : 'bg-red-600 hover:bg-red-700 shadow-lg'}`}
           >
@@ -110,7 +110,7 @@ export default function Scenes() {
       <form onSubmit={handleSearch} className="mb-8 flex gap-2">
         <input type="text" placeholder="Keresés cím, leírás vagy címke (#tag)..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-4 text-white focus:border-red-600 focus:outline-none" />
         <button type="submit" className="px-8 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-lg border border-gray-700">Keresés</button>
-        {searchQuery && <button type="button" onClick={() => { setSearchQuery(''); setPage(1); fetchData('', 1); }} className="px-4 bg-gray-800 text-gray-400 hover:text-red-400 rounded-lg border border-gray-700">✕</button>}
+        {searchQuery && <button type="button" onClick={() => { setSearchQuery(''); setPage(1); fetchData('', 1); }} className="flex-1 bg-gray-900 border border-gray-700 rounded-lg p-4 text-white placeholder-gray-500 focus:border-red-600 focus:outline-none">✕</button>}
       </form>
 
       {/* ADD FORM */}
@@ -164,7 +164,7 @@ export default function Scenes() {
                   ) : scene.image_url ? (
                     <img src={scene.image_url} alt={scene.title} className="w-full h-full object-cover" />
                   ) : <div className="w-full h-full flex items-center justify-center text-3xl">▶️</div>}
-                  
+
                   {user && (user.is_admin || user.id === scene.created_by) && (
                     <div className="absolute top-2 right-2 flex gap-2">
                        <button onClick={() => setEditingScene(scene)} className="bg-black/70 hover:bg-yellow-600 text-white p-2 rounded backdrop-blur transition-colors" title="Szerkesztés">✏️</button>
@@ -178,10 +178,10 @@ export default function Scenes() {
                     <Link to={`/scenes/${scene.id}`} className="font-bold text-white text-lg hover:text-blue-400 transition-colors line-clamp-1">{scene.title}</Link>
                     <span className="text-xs font-mono bg-black text-gray-400 px-2 py-1 rounded whitespace-nowrap">{scene.start_timestamp}</span>
                   </div>
-                  
+
                   <Link to={`/movies/${scene.movie_id}`} className="text-sm text-blue-500 hover:text-blue-400 mb-2 block font-medium">🎬 {getMovieTitle(scene.movie_id)}</Link>
                   <p className="text-gray-400 text-sm line-clamp-2 mb-4 flex-1">{scene.description}</p>
-                  
+
                   <div className="flex flex-wrap gap-2 mt-auto">
                     {scene.tags && scene.tags.split(',').map((tag, idx) => (
                       <span key={idx} onClick={() => handleTagClick(tag)} className="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-2 py-1 rounded text-xs hover:bg-yellow-500/20 cursor-pointer transition-colors">#{tag.trim()}</span>
