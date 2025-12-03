@@ -19,8 +19,6 @@ export default function SceneDetail() {
           const movieRes = await fetch(`http://localhost:8000/movies/${foundScene.movie_id}`);
           if (movieRes.ok) {
             const movieData = await movieRes.json();
-            // In case your endpoint returns {data: ...} or just the object, check structure
-            // Usually get_movie returns the object directly based on your backend code
             setMovie(movieData);
           }
         }

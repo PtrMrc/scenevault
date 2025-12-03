@@ -10,7 +10,7 @@ export default {
         primary: '#E50914',
         dark: '#141414',
         darker: '#000000',
-        gray: '#808080',
+        cinemaGray: '#808080',
       }
     },
   },

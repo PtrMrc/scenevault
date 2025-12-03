@@ -80,6 +80,27 @@ export default function Movies() {
     } catch (err) { alert("Hálózati hiba"); }
   };
 
+  const handleDelete = async (movieId) => {
+    if (!window.confirm("Biztosan törölni akarod ezt a filmet? FIGYELEM: Ez törölheti a hozzá tartozó jeleneteket is!")) return;
+
+    try {
+      const res = await fetch(`http://localhost:8000/movies/${movieId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (res.ok) {
+        // Refresh list
+        fetchMovies(searchQuery, page);
+      } else {
+        const data = await res.json();
+        alert(data.detail || "Hiba történt a törléskor");
+      }
+    } catch (err) {
+      alert("Hálózati hiba");
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
@@ -137,7 +158,7 @@ export default function Movies() {
         </div>
       )}
 
-      {/* EDIT MODAL (Using the styled version) */}
+      {/* EDIT MODAL */}
       {editingMovie && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
           <div className="w-full max-w-lg bg-gray-900 border border-gray-800 rounded-xl shadow-2xl p-8 max-h-[90vh] overflow-y-auto">
@@ -179,15 +200,30 @@ export default function Movies() {
                 </div>
               </Link>
 
-              {/* Edit Button (Absolute Positioned) */}
+              {/* Admin Actions (Edit & Delete) */}
               {user && user.is_admin && (
-                <button
-                  onClick={() => setEditingMovie(movie)}
-                  className="absolute top-2 right-2 bg-black/60 hover:bg-yellow-600 text-white p-2 rounded-full backdrop-blur-sm transition-colors opacity-0 group-hover:opacity-100"
-                  title="Szerkesztés"
-                >
-                  ✏️
-                </button>
+                <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault(); // Prevent clicking the card link
+                      setEditingMovie(movie);
+                    }}
+                    className="bg-black/70 hover:bg-yellow-600 text-white p-2 rounded-full backdrop-blur-sm transition-colors"
+                    title="Szerkesztés"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault(); // Prevent clicking the card link
+                      handleDelete(movie.id);
+                    }}
+                    className="bg-black/70 hover:bg-red-600 text-white p-2 rounded-full backdrop-blur-sm transition-colors"
+                    title="Törlés"
+                  >
+                    🗑️
+                  </button>
+                </div>
               )}
             </div>
           ))}
